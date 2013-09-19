@@ -1,9 +1,10 @@
 var activities = require('./activities');
 
 
-// this changes the distribution
+// this changes the distributions
 // lower = more evenly distributed; 1.325 = 80/20
-var alpha = 0.5;
+var activityAlpha = 0.05;
+var lengthAlpha = 0.20;
 
 // Returns a random Pareto number
 Math.pareto = function(a) {
@@ -13,10 +14,8 @@ Math.pareto = function(a) {
 
 // Returns a random Pareto number between 0 and 1
 Math.fractal = function(a) {
-  var alpha = a || 0.20;
-
-  var num = (Math.pareto(alpha) - 1) / 10;
-  if (num > 1) return Math.fractal(alpha);
+  var num = (Math.pareto(a) - 1) / 10;
+  if (num > 1) return Math.fractal(a);
   return num;
 };
 
@@ -24,12 +23,12 @@ Math.fractal = function(a) {
 function choose() {
   var rand, activity, unit, spread, distance, digits;
 
-  rand = Math.floor(Math.fractal(alpha) * activities.length);
+  rand = Math.floor(Math.fractal(activityAlpha) * activities.length);
   activity = activities[rand];
   unit = activity.max ? activity.unit : '';
 
   spread = (activity.max || 0) - (activity.min || 0);
-  rand = Math.fractal() * spread;
+  rand = Math.fractal(lengthAlpha) * spread;
   digits = activity.digits === undefined ? 1 : activity.digits;
   distance = activity.min + rand;
   distance = distance ? distance.toFixed(digits) : '';
